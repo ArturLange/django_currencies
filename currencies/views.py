@@ -9,12 +9,20 @@ from .scraping import update_exchange_rates
 def currency(request, currency_code: str):
     update_exchange_rates(currency_code)
 
-    exchange_rate = ExchangeRate.objects.filter(currency__code=currency_code).order_by('-date').first()
-    return JsonResponse({
+    exchange_rates = ExchangeRate.objects.filter(currency__code=currency_code).order_by('-date')
+
+    if request.GET.get('start_date'):
+        exchange_rates = exchange_rates.filter(date__gte=request.GET.get('start_date'))
+    if request.GET.get('end_date'):
+        exchange_rates = exchange_rates.filter(date__lte=request.GET.get('end_date'))
+
+    return JsonResponse([{
         'currency_code': currency_code.upper(),
         'date': exchange_rate.date.isoformat(),
         'exchange_rate': exchange_rate.rate
-    }, json_dumps_params={'default': float})
+    } for exchange_rate in exchange_rates],
+    safe=False,
+    json_dumps_params={'default': float})
 
 
 def all_currencies(request):
