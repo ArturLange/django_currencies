@@ -5,5 +5,5 @@ from . import views
 app_name = 'currencies'
 urlpatterns = [
     path('', views.index, name='index'),
-    path('<str:currency_acronym>', views.currency, name='currency')
+    path('<str:currency_code>', views.currency, name='currency')
 ]
