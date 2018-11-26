@@ -13,7 +13,8 @@ class ExchangeRate(models.Model):
 
     currency = models.ForeignKey(
         Currency,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='exchange_rates'
     )
 
     def __str__(self):
